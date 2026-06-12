@@ -17,6 +17,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - helloblog-net
 
   redis:
     image: redis:7-alpine
@@ -28,6 +30,71 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - helloblog-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: helloblog-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/etc/config.docker.yaml:/app/etc/config.yaml
+      - uploads:/app/uploads
+    environment:
+      - TZ=Asia/Shanghai
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - helloblog-net
+
+  mcp:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: helloblog-mcp
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./backend/etc/config.docker.yaml:/app/etc/config.yaml
+    environment:
+      - TZ=Asia/Shanghai
+    command: ["./helloblog-mcp"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - helloblog-net
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    container_name: helloblog-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - mcp
+    restart: unless-stopped
+    networks:
+      - helloblog-net
+
+volumes:
+  pgdata:
+  uploads:
+
+networks:
+  helloblog-net:
 
 volumes:
   pgdata:

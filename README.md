@@ -155,3 +155,4 @@ blog2.0/
 | GET | `/api/v1/links` | 友情链接 | - |
 | POST | `/api/v1/links` | 添加链接 | ✅ |
 | GET | `/api/v1/upload/avatar` | 上传头像 | ✅ |
+
