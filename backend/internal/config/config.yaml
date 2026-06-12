@@ -1,0 +1,25 @@
+server:
+  addr: ":8080"
+  mode: debug  # debug | release | test
+
+database:
+  dsn: "host=localhost user=helloblog password=helloblog123 dbname=helloblog port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+
+jwt:
+  secret: "change-me-to-a-random-secret"
+  expire_hours: 72
+
+oauth:
+  github:
+    client_id: ""
+    client_secret: ""
+    redirect_url: "http://localhost:8080/api/v1/auth/github/callback"
+
+mcp:
+  allowed_origins:
+    - "http://localhost:3000"
