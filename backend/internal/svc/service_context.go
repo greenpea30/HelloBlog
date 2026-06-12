@@ -30,6 +30,8 @@ type ServiceContext struct {
 	DB          *gorm.DB
 	Redis       *redis.Client
 	JWT         *jwt.Manager
+	Post        postservice.UseCase
+	Search      searchservice.UseCase
 	Controllers Controllers
 }
 
@@ -110,6 +112,8 @@ func NewServiceContext(cfg config.Config, database *gorm.DB, redisClient *redis.
 		DB:     database,
 		Redis:  redisClient,
 		JWT:    jwtManager,
+		Post:   postSvc,
+		Search: searchSvc,
 		Controllers: Controllers{
 			User:         userController,
 			Post:         postController,

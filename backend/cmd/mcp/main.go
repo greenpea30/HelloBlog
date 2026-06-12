@@ -32,11 +32,12 @@ func main() {
 	}
 
 	svcCtx := svc.NewServiceContext(cfg, database, redisClient)
-	mcpServer := mcp.NewServer(svcCtx)
+	handler := mcp.NewHTTPHandler(svcCtx, cfg.MCP)
 
-	handler := mcp.NewHTTPHandler(mcpServer, cfg.MCP)
-	log.Printf("[mcp] MCP Server listening on :8081")
-	if err := http.ListenAndServe(":8081", handler); err != nil {
+	addr := ":8081"
+	log.Printf("[mcp] MCP Server listening on %s", addr)
+	log.Printf("[mcp] Tools: health, list_posts, get_post, search_posts")
+	if err := http.ListenAndServe(addr, handler); err != nil {
 		log.Fatalf("run mcp server: %v", err)
 	}
 }
