@@ -95,6 +95,3 @@ volumes:
 
 networks:
   helloblog-net:
-
-volumes:
-  pgdata:
