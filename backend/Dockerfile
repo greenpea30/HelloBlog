@@ -4,6 +4,9 @@ FROM golang:1.25-alpine AS builder
 # 使用国内 Go 镜像加速
 ENV GOPROXY=https://goproxy.cn,direct
 
+# 使用阿里云 APK 镜像加速
+RUN sed -i 's|dl-cdn.alpinelinux.org|mirrors.aliyun.com|g' /etc/apk/repositories
+
 WORKDIR /app
 
 # 安装构建依赖
@@ -21,7 +24,9 @@ RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /app/helloblog-api ./cmd/api/main
 # ===== Stage 2: 最小运行镜像 =====
 FROM alpine:3.19
 
-RUN apk add --no-cache ca-certificates tzdata && \
+# 使用阿里云 APK 镜像加速
+RUN sed -i 's|dl-cdn.alpinelinux.org|mirrors.aliyun.com|g' /etc/apk/repositories && \
+    apk add --no-cache ca-certificates tzdata && \
     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo "Asia/Shanghai" > /etc/timezone
 
