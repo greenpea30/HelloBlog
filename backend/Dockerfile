@@ -1,6 +1,9 @@
 # ===== Stage 1: Build Go binary =====
 FROM golang:1.25-alpine AS builder
 
+# 使用国内 Go 镜像加速
+ENV GOPROXY=https://goproxy.cn,direct
+
 WORKDIR /app
 
 # 安装构建依赖

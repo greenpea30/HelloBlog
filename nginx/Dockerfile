@@ -1,6 +1,9 @@
 # ===== Stage 1: Build frontend =====
 FROM node:20-alpine AS builder
 
+# 使用国内 npm 镜像加速
+RUN npm config set registry https://registry.npmmirror.com
+
 WORKDIR /app
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
