@@ -27,12 +27,12 @@ type UpdateProfileRequest struct {
 
 // 响应
 type UserResponse struct {
-	ID        int64  `json:"id"`
-	ZjuID     *string `json:"zju_id,omitempty"`
-	Username  string `json:"username"`
-	Email     *string `json:"email,omitempty"`
-	AvatarURL string `json:"avatar_url,omitempty"`
-	Bio       string `json:"bio,omitempty"`
+	ID        int64     `json:"id"`
+	ZjuID     *string   `json:"zju_id,omitempty"`
+	Username  string    `json:"username"`
+	Email     *string   `json:"email,omitempty"`
+	AvatarURL string    `json:"avatar_url,omitempty"`
+	Bio       string    `json:"bio,omitempty"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }
 
