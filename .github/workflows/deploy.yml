@@ -24,11 +24,32 @@ jobs:
               echo "📦 目录不存在，执行首次克隆..."
               cd ~
               git clone https://github.com/greenpea30/HelloBlog.git HelloBlog
+              cd ~/HelloBlog
+              # 切换到 SSH 协议，连接更稳定
+              git remote set-url origin git@github.com:greenpea30/HelloBlog.git
+            else
+              cd ~/HelloBlog
+              # 确保使用 SSH 协议
+              CURRENT_URL=$(git remote get-url origin)
+              if echo "$CURRENT_URL" | grep -q "^https://"; then
+                echo "🔄 切换到 SSH 协议..."
+                git remote set-url origin git@github.com:greenpea30/HelloBlog.git
+              fi
             fi
 
             echo "🔍 2/4 拉取最新代码..."
-            cd ~/HelloBlog
-            git pull
+            for i in 1 2 3; do
+              echo "  尝试 #$i..."
+              if git pull; then
+                break
+              fi
+              if [ $i -eq 3 ]; then
+                echo "❌ git pull 失败，已重试 3 次"
+                exit 1
+              fi
+              echo "  等待 5 秒后重试..."
+              sleep 5
+            done
 
             echo "🔍 3/4 检查 Docker..."
             docker info > /dev/null 2>&1 || { echo "❌ Docker 未运行"; exit 1; }
