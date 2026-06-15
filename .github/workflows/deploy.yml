@@ -21,23 +21,20 @@ jobs:
             set -e
             echo "🔍 1/4 检查项目目录..."
             if [ ! -d ~/HelloBlog ]; then
-              echo "📦 目录不存在，执行首次克隆..."
+              echo "📦 目录不存在，执行首次克隆（HTTPS）..."
               cd ~
               git clone https://github.com/greenpea30/HelloBlog.git HelloBlog
-              cd ~/HelloBlog
-              # 切换到 SSH 协议，连接更稳定
-              git remote set-url origin git@github.com:greenpea30/HelloBlog.git
-            else
-              cd ~/HelloBlog
-              # 确保使用 SSH 协议
-              CURRENT_URL=$(git remote get-url origin)
-              if echo "$CURRENT_URL" | grep -q "^https://"; then
-                echo "🔄 切换到 SSH 协议..."
-                git remote set-url origin git@github.com:greenpea30/HelloBlog.git
-              fi
             fi
 
             echo "🔍 2/4 拉取最新代码..."
+            cd ~/HelloBlog
+            # 确保使用 HTTPS（SSH 需要额外配置，HTTPS 更简单可靠）
+            CURRENT_URL=$(git remote get-url origin)
+            if echo "$CURRENT_URL" | grep -q "^git@"; then
+              echo "🔄 切换回 HTTPS 协议..."
+              git remote set-url origin https://github.com/greenpea30/HelloBlog.git
+            fi
+            GIT_TERMINAL_PROMPT=0
             for i in 1 2 3; do
               echo "  尝试 #$i..."
               if git pull; then
