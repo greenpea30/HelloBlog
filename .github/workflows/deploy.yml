@@ -29,34 +29,23 @@ jobs:
             echo "🔍 2/5 拉取最新代码..."
             cd ~/HelloBlog
             GIT_TERMINAL_PROMPT=0
+            # 配置 git 以解决国内 TLS 连接问题
+            git config http.version HTTP/1.1
+            git config http.postBuffer 524288000
             PULL_OK=false
-            # 先尝试直连 GitHub
-            for i in 1 2 3; do
-              echo "  尝试直连 #$i..."
-              if git pull; then
+            for i in 1 2 3 4 5; do
+              echo "  尝试 #$i..."
+              if timeout 120 git pull; then
                 PULL_OK=true
                 break
               fi
-              echo "  等待 5 秒后重试..."
-              sleep 5
+              echo "  等待 10 秒后重试..."
+              sleep 10
             done
-            # 直连失败则走 ghproxy 代理
             if [ "$PULL_OK" != "true" ]; then
-              echo "  直连失败，切换 ghproxy.com 代理..."
-              git remote set-url origin https://ghproxy.com/https://github.com/greenpea30/HelloBlog.git
-              for i in 1 2 3; do
-                echo "  尝试代理 #$i..."
-                if git pull; then
-                  PULL_OK=true
-                  break
-                fi
-                echo "  等待 5 秒后重试..."
-                sleep 5
-              done
-              git remote set-url origin https://github.com/greenpea30/HelloBlog.git
-            fi
-            if [ "$PULL_OK" != "true" ]; then
-              echo "❌ git pull 失败，已重试 6 次（直连+代理各 3 次）"
+              echo "❌ git pull 失败，已重试 5 次"
+              echo "  提示：请检查服务器能否访问 github.com"
+              echo "  或在服务器手动执行: cd ~/HelloBlog && git pull"
               exit 1
             fi
 
