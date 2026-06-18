@@ -80,7 +80,7 @@ export default function PostDetail() {
           <Link to={`/user/${post.user.id}`} style={{ color: '#555', textDecoration: 'none' }}>{post.user?.username}</Link> · {new Date(post.created_at).toLocaleString('zh-CN')} ·
           👁 {post.view_count} ·
           <span style={{ cursor: 'pointer' }} onClick={handleLike}>❤ {post.like_count}</span> ·
-          💬 {post.comment_count}</span>
+          💬 {post.comment_count}
         </div>
         {post.summary && <blockquote style={{ color: '#666', marginTop: 16 }}>{post.summary}</blockquote>}
         {token && post.user?.id === user.id && (
