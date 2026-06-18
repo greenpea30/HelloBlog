@@ -1,86 +1,41 @@
 package zjulogin
 
 import (
-	"context"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"regexp"
+	"strings"
 )
 
-var metaRefreshRegexp = regexp.MustCompile(`meta http-equiv="refresh" content="0;URL=([^"]+)"`)
+var executionRegexp = regexp.MustCompile(`name="execution" value="([^"]+)"`)
 
-func followRedirectsAndMetaRefresh(ctx context.Context, client *CookieClient, startURL string) error {
-	currentURL := startURL
-	for {
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, currentURL, nil)
-		if err != nil {
-			return err
-		}
+func findSubmatch(re *regexp.Regexp, s string) string {
+	m := re.FindStringSubmatch(s)
+	if len(m) > 1 {
+		return m[1]
+	}
+	return ""
+}
 
-		res, err := client.Do(req)
-		if err != nil {
-			return err
-		}
-		body, readErr := io.ReadAll(res.Body)
-		closeResponseBody(res)
-		if readErr != nil {
-			return readErr
-		}
-
-		if res.StatusCode == http.StatusOK {
-			if next := findSubmatch(metaRefreshRegexp, string(body)); next != "" {
-				currentURL = resolveLocation(currentURL, next)
-				continue
-			}
-		}
-
-		if res.StatusCode < http.StatusMultipleChoices || res.StatusCode >= http.StatusBadRequest {
-			return nil
-		}
-
-		location := res.Header.Get("Location")
-		if location == "" {
-			return fmt.Errorf("redirect from %s has empty location", currentURL)
-		}
-		currentURL = resolveLocation(currentURL, location)
+func closeResponseBody(res *http.Response) {
+	if res != nil && res.Body != nil {
+		_, _ = io.Copy(io.Discard, res.Body)
+		res.Body.Close()
 	}
 }
 
-func redirectToHost(ctx context.Context, client *CookieClient, startURL string, targetHost string) (string, error) {
-	currentURL := startURL
-	for {
-		currentHost, err := hostName(currentURL)
-		if err != nil {
-			return "", err
-		}
-		if currentHost == targetHost {
-			return currentURL, nil
-		}
-
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, currentURL, nil)
-		if err != nil {
-			return "", err
-		}
-		res, err := client.Do(req)
-		if err != nil {
-			return "", err
-		}
-		closeResponseBody(res)
-
-		location := res.Header.Get("Location")
-		if location == "" {
-			return "", fmt.Errorf("redirect from %s has empty location", currentURL)
-		}
-		currentURL = resolveLocation(currentURL, location)
+func resolveLocation(baseURL string, location string) string {
+	if strings.HasPrefix(location, "http://") || strings.HasPrefix(location, "https://") {
+		return location
 	}
-}
-
-func hostName(rawURL string) (string, error) {
-	parsed, err := url.Parse(rawURL)
+	base, err := url.Parse(baseURL)
 	if err != nil {
-		return "", err
+		return location
 	}
-	return parsed.Hostname(), nil
+	resolved, err := base.Parse(location)
+	if err != nil {
+		return location
+	}
+	return resolved.String()
 }

@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"regexp"
 	"strings"
 	"sync"
 )
@@ -16,9 +15,6 @@ const (
 	zjuamLoginURL  = "https://zjuam.zju.edu.cn/cas/login"
 	zjuamPubKeyURL = "https://zjuam.zju.edu.cn/cas/v2/getPubKey"
 )
-
-var executionRegexp = regexp.MustCompile(`name="execution" value="([^"]+)"`)
-var loginMessageRegexp = regexp.MustCompile(`<span id="msg">([^<]+)</span>`)
 
 type ZJUAM struct {
 	username string
@@ -207,12 +203,7 @@ func (a *ZJUAM) login(ctx context.Context, loginURL string) (string, error) {
 		return location, nil
 	}
 	if res.StatusCode == http.StatusOK {
-		body, _ := io.ReadAll(res.Body)
-		message := findSubmatch(loginMessageRegexp, string(body))
-		if message == "" {
-			message = "unknown login failure"
-		}
-		return "", fmt.Errorf("zjuam login failed: %s", message)
+		return "", fmt.Errorf("zjuam login failed")
 	}
 	return "", fmt.Errorf("zjuam login failed with status %d", res.StatusCode)
 }
@@ -256,22 +247,4 @@ func (a *ZJUAM) getPubKey(ctx context.Context) (zjuamPubKey, error) {
 	return pubKey, nil
 }
 
-func findSubmatch(re *regexp.Regexp, text string) string {
-	matches := re.FindStringSubmatch(text)
-	if len(matches) < 2 {
-		return ""
-	}
-	return matches[1]
-}
 
-func resolveLocation(baseURL string, location string) string {
-	base, err := url.Parse(baseURL)
-	if err != nil {
-		return location
-	}
-	next, err := url.Parse(location)
-	if err != nil {
-		return location
-	}
-	return base.ResolveReference(next).String()
-}
