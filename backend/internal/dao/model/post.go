@@ -5,6 +5,7 @@ import "time"
 type Post struct {
 	ID           int64     `gorm:"primaryKey;column:id"`
 	UserID       int64     `gorm:"column:user_id;not null;index"`
+	FolderID     *int64    `gorm:"column:folder_id;index"`
 	Title        string    `gorm:"column:title;size:200;not null"`
 	Summary      string    `gorm:"column:summary"`
 	Content      string    `gorm:"column:content;not null"`

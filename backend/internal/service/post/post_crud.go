@@ -46,6 +46,9 @@ func (s *Service) Update(id int64, userID int64, req dto.UpdatePostRequest) (*dt
 	if req.Format != "" {
 		post.Format = req.Format
 	}
+	if req.FolderID != nil {
+		post.FolderID = req.FolderID
+	}
 
 	if err := s.posts.Update(post); err != nil {
 		return nil, response.Wrap(response.CodeInternalError, "internal server error", err)

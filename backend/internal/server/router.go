@@ -33,6 +33,7 @@ func RegisterRoutes(engine *gin.Engine, svcCtx *svc.ServiceContext) {
 	registerSearchRoutes(api, svcCtx)
 	registerNotificationRoutes(api, svcCtx)
 	registerLinkRoutes(api, svcCtx)
+	registerFolderRoutes(api, svcCtx)
 }
 
 func registerUserRoutes(api *gin.RouterGroup, svcCtx *svc.ServiceContext) {
@@ -106,6 +107,20 @@ func registerLinkRoutes(api *gin.RouterGroup, svcCtx *svc.ServiceContext) {
 	{
 		links.POST("", svcCtx.Controllers.Link.Create)
 		links.DELETE("/:id", svcCtx.Controllers.Link.Delete)
+	}
+}
+
+func registerFolderRoutes(api *gin.RouterGroup, svcCtx *svc.ServiceContext) {
+	// 公开：用户主页（无需登录）
+	api.GET("/users/:id/profile", svcCtx.Controllers.Folder.GetUserProfile)
+
+	// 需要登录
+	folders := api.Group("/folders")
+	folders.Use(middleware.Auth(svcCtx.JWT))
+	{
+		folders.GET("", svcCtx.Controllers.Folder.List)
+		folders.POST("", svcCtx.Controllers.Folder.Create)
+		folders.DELETE("/:id", svcCtx.Controllers.Folder.Delete)
 	}
 }
 

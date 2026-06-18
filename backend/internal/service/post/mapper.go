@@ -11,11 +11,12 @@ func toModel(userID int64, req dto.CreatePostRequest) *model.Post {
 		format = "markdown"
 	}
 	return &model.Post{
-		UserID:  userID,
-		Title:   req.Title,
-		Summary: req.Summary,
-		Content: req.Content,
-		Format:  format,
+		UserID:   userID,
+		FolderID: req.FolderID,
+		Title:    req.Title,
+		Summary:  req.Summary,
+		Content:  req.Content,
+		Format:   format,
 	}
 }
 

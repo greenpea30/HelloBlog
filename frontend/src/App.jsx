@@ -6,6 +6,7 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import CreatePost from './pages/CreatePost.jsx'
 import Profile from './pages/Profile.jsx'
+import UserProfile from './pages/UserProfile.jsx'
 import Notifications from './pages/Notifications.jsx'
 import Links from './pages/Links.jsx'
 
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/create" element={<CreatePost />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/user/:id" element={<UserProfile />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/links" element={<Links />} />
         </Routes>

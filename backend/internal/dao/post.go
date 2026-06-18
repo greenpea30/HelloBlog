@@ -116,3 +116,27 @@ func (d *PostDAO) IncrementCommentCount(id int64) error {
 	return d.db.Model(&model.Post{}).Where("id = ?", id).
 		UpdateColumn("comment_count", gorm.Expr("comment_count + 1")).Error
 }
+
+func (d *PostDAO) ListByUserAndFolder(userID int64, folderID *int64) ([]model.Post, error) {
+	var posts []model.Post
+	query := d.db.Where("user_id = ? AND status = ?", userID, "normal")
+	if folderID == nil {
+		query = query.Where("folder_id IS NULL")
+	} else {
+		query = query.Where("folder_id = ?", *folderID)
+	}
+	err := query.Order("created_at DESC").Find(&posts).Error
+	return posts, err
+}
+
+func (d *PostDAO) CountByUserAndFolder(userID int64, folderID *int64) (int64, error) {
+	var count int64
+	query := d.db.Model(&model.Post{}).Where("user_id = ? AND status = ?", userID, "normal")
+	if folderID == nil {
+		query = query.Where("folder_id IS NULL")
+	} else {
+		query = query.Where("folder_id = ?", *folderID)
+	}
+	err := query.Count(&count).Error
+	return count, err
+}

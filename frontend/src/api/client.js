@@ -69,11 +69,32 @@ export async function getPost(id) {
   return request(`/posts/${id}`)
 }
 
-export async function createPost(title, summary, content, format = 'markdown') {
+export async function createPost(title, summary, content, format = 'markdown', folderId = null) {
   return request('/posts', {
     method: 'POST',
-    body: JSON.stringify({ title, summary, content, format }),
+    body: JSON.stringify({ title, summary, content, format, folder_id: folderId }),
   })
+}
+
+// Folders
+export async function getFolders() {
+  return request('/folders')
+}
+
+export async function createFolder(name) {
+  return request('/folders', {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  })
+}
+
+export async function deleteFolder(id) {
+  return request(`/folders/${id}`, { method: 'DELETE' })
+}
+
+// User profile (public)
+export async function getUserProfile(userId) {
+  return request(`/users/${userId}/profile`)
 }
 
 // Comments

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { getPost, getComments, createComment, toggleLike, deletePost } from '../api/client.js'
@@ -73,11 +73,11 @@ export default function PostDetail() {
         <h1>{post.title}</h1>
         <div className="post-meta" style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
           {post.user?.avatar_url ? (
-            <img src={post.user.avatar_url} className="avatar-sm" alt="" />
+            <Link to={`/user/${post.user.id}`}><img src={post.user.avatar_url} className="avatar-sm" alt="" /></Link>
           ) : (
-            <span className="avatar-sm avatar-sm-text">{post.user?.username?.[0]?.toUpperCase() || '?'}</span>
+            <Link to={`/user/${post.user.id}`} className="avatar-sm avatar-sm-text">{post.user?.username?.[0]?.toUpperCase() || '?'}</Link>
           )}
-          <span>{post.user?.username} · {new Date(post.created_at).toLocaleString('zh-CN')} ·
+          <Link to={`/user/${post.user.id}`} style={{ color: '#555', textDecoration: 'none' }}>{post.user?.username}</Link> · {new Date(post.created_at).toLocaleString('zh-CN')} ·
           👁 {post.view_count} ·
           <span style={{ cursor: 'pointer' }} onClick={handleLike}>❤ {post.like_count}</span> ·
           💬 {post.comment_count}</span>

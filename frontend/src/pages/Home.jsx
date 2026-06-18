@@ -97,11 +97,11 @@ export default function Home() {
             </h2>
             <div className="post-meta" style={{display:'flex',alignItems:'center',gap:8}}>
               {post.user?.avatar_url ? (
-                <img src={post.user.avatar_url} className="avatar-sm" alt="" />
+                <Link to={`/user/${post.user.id}`}><img src={post.user.avatar_url} className="avatar-sm" alt="" /></Link>
               ) : (
-                <span className="avatar-sm avatar-sm-text">{post.user?.username?.[0]?.toUpperCase() || '?'}</span>
+                <Link to={`/user/${post.user.id}`} className="avatar-sm avatar-sm-text">{post.user?.username?.[0]?.toUpperCase() || '?'}</Link>
               )}
-              <span>{post.user?.username || '未知'} · {new Date(post.created_at).toLocaleDateString('zh-CN')} · 👁 {post.view_count ?? 0} · 💬 {post.comment_count ?? 0}</span>
+              <Link to={`/user/${post.user.id}`} style={{ color: '#555', textDecoration: 'none' }}>{post.user?.username || '未知'}</Link> · {new Date(post.created_at).toLocaleDateString('zh-CN')} · 👁 {post.view_count ?? 0} · 💬 {post.comment_count ?? 0}
             </div>
             {post.summary && <p className="post-summary">{post.summary}</p>}
             <div className="post-actions">

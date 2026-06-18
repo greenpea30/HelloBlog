@@ -5,6 +5,7 @@ import (
 
 	"helloblog/internal/config"
 	commentctrl "helloblog/internal/controller/comment"
+	folderctrl "helloblog/internal/controller/folder"
 	likectrl "helloblog/internal/controller/like"
 	linkctrl "helloblog/internal/controller/link"
 	notifctrl "helloblog/internal/controller/notification"
@@ -14,6 +15,7 @@ import (
 	"helloblog/internal/dao"
 	"helloblog/internal/pkg/jwt"
 	commentservice "helloblog/internal/service/comment"
+	folderservice "helloblog/internal/service/folder"
 	likeservice "helloblog/internal/service/like"
 	linkservice "helloblog/internal/service/link"
 	notifservice "helloblog/internal/service/notification"
@@ -43,6 +45,7 @@ type Controllers struct {
 	Search       *searchctrl.Controller
 	Notification *notifctrl.Controller
 	Link         *linkctrl.Controller
+	Folder       *folderctrl.Controller
 }
 
 // CommentNotifier 实现 commentservice.Notifier 接口
@@ -87,12 +90,14 @@ func NewServiceContext(cfg config.Config, database *gorm.DB, redisClient *redis.
 	searchDAO := dao.NewSearchDAO(database)
 	notifDAO := dao.NewNotificationDAO(database)
 	linkDAO := dao.NewLinkDAO(database)
+	folderDAO := dao.NewFolderDAO(database)
 
 	// Service
 	userSvc := userservice.NewService(userDAO, jwtManager)
 	postSvc := postservice.NewService(postDAO)
 	notifSvc := notifservice.NewService(notifDAO)
 	linkSvc := linkservice.NewService(linkDAO)
+	folderSvc := folderservice.NewService(database, folderDAO, postDAO, userDAO)
 	notifier := &CommentNotifier{postDAO: postDAO, notifService: notifSvc, userDAO: userDAO}
 	commentSvc := commentservice.NewService(commentDAO, postDAO, notifier)
 	likeSvc := likeservice.NewService(likeDAO, postDAO, commentDAO)
@@ -106,6 +111,7 @@ func NewServiceContext(cfg config.Config, database *gorm.DB, redisClient *redis.
 	searchController := searchctrl.NewController(searchSvc)
 	notifController := notifctrl.NewController(notifSvc)
 	linkController := linkctrl.NewController(linkSvc)
+	folderController := folderctrl.NewController(folderSvc)
 
 	return &ServiceContext{
 		Config: cfg,
@@ -122,6 +128,7 @@ func NewServiceContext(cfg config.Config, database *gorm.DB, redisClient *redis.
 			Search:       searchController,
 			Notification: notifController,
 			Link:         linkController,
+			Folder:       folderController,
 		},
 	}
 }

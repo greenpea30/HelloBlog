@@ -4,17 +4,19 @@ import "time"
 
 // 请求
 type CreatePostRequest struct {
-	Title   string `json:"title" binding:"required,min=1,max=200"`
-	Summary string `json:"summary" binding:"max=500"`
-	Content string `json:"content" binding:"required,min=1"`
-	Format  string `json:"format" binding:"omitempty,oneof=plain markdown"`
+	Title    string  `json:"title" binding:"required,min=1,max=200"`
+	Summary  string  `json:"summary" binding:"max=500"`
+	Content  string  `json:"content" binding:"required,min=1"`
+	Format   string  `json:"format" binding:"omitempty,oneof=plain markdown"`
+	FolderID *int64  `json:"folder_id"`
 }
 
 type UpdatePostRequest struct {
-	Title   string `json:"title" binding:"required,min=1,max=200"`
-	Summary string `json:"summary" binding:"max=500"`
-	Content string `json:"content" binding:"required,min=1"`
-	Format  string `json:"format" binding:"omitempty,oneof=plain markdown"`
+	Title    string  `json:"title" binding:"required,min=1,max=200"`
+	Summary  string  `json:"summary" binding:"max=500"`
+	Content  string  `json:"content" binding:"required,min=1"`
+	Format   string  `json:"format" binding:"omitempty,oneof=plain markdown"`
+	FolderID *int64  `json:"folder_id"`
 }
 
 type PostListRequest struct {
