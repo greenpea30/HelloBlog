@@ -28,25 +28,37 @@ jobs:
 
             echo "🔍 2/5 拉取最新代码..."
             cd ~/HelloBlog
-            # 确保使用 HTTPS（SSH 需要额外配置，HTTPS 更简单可靠）
-            CURRENT_URL=$(git remote get-url origin)
-            if echo "$CURRENT_URL" | grep -q "^git@"; then
-              echo "🔄 切换回 HTTPS 协议..."
-              git remote set-url origin https://github.com/greenpea30/HelloBlog.git
-            fi
             GIT_TERMINAL_PROMPT=0
+            PULL_OK=false
+            # 先尝试直连 GitHub
             for i in 1 2 3; do
-              echo "  尝试 #$i..."
+              echo "  尝试直连 #$i..."
               if git pull; then
+                PULL_OK=true
                 break
-              fi
-              if [ $i -eq 3 ]; then
-                echo "❌ git pull 失败，已重试 3 次"
-                exit 1
               fi
               echo "  等待 5 秒后重试..."
               sleep 5
             done
+            # 直连失败则走 ghproxy 代理
+            if [ "$PULL_OK" != "true" ]; then
+              echo "  直连失败，切换 ghproxy.com 代理..."
+              git remote set-url origin https://ghproxy.com/https://github.com/greenpea30/HelloBlog.git
+              for i in 1 2 3; do
+                echo "  尝试代理 #$i..."
+                if git pull; then
+                  PULL_OK=true
+                  break
+                fi
+                echo "  等待 5 秒后重试..."
+                sleep 5
+              done
+              git remote set-url origin https://github.com/greenpea30/HelloBlog.git
+            fi
+            if [ "$PULL_OK" != "true" ]; then
+              echo "❌ git pull 失败，已重试 6 次（直连+代理各 3 次）"
+              exit 1
+            fi
 
             echo "🔍 3/5 执行数据库迁移..."
             docker exec helloblog-postgres psql -U helloblog -d helloblog -c "
