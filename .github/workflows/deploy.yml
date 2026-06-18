@@ -12,10 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6.0.3
 
-      - name: 同步代码到项目目录
-        run: |
-          rsync -a --delete ${{ github.workspace }}/ ~/HelloBlog/ --exclude='.git'
-
       - name: 执行数据库迁移
         run: |
           docker exec helloblog-postgres psql -U helloblog -d helloblog -c "
@@ -51,7 +47,7 @@ jobs:
 
       - name: 构建并重启服务
         run: |
-          cd ~/HelloBlog
+          cd ${{ github.workspace }}
           docker compose up -d --build
 
       - name: 部署完成
