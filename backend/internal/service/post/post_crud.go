@@ -43,6 +43,9 @@ func (s *Service) Update(id int64, userID int64, req dto.UpdatePostRequest) (*dt
 	post.Title = req.Title
 	post.Summary = req.Summary
 	post.Content = req.Content
+	if req.Format != "" {
+		post.Format = req.Format
+	}
 
 	if err := s.posts.Update(post); err != nil {
 		return nil, response.Wrap(response.CodeInternalError, "internal server error", err)

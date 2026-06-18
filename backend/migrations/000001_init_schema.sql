@@ -62,6 +62,7 @@ CREATE TABLE "posts" (
   "title" varchar(200) NOT NULL,
   "summary" text,
   "content" text NOT NULL,
+  "format" varchar(10) NOT NULL DEFAULT 'markdown',
   "search_vector" tsvector,
   "like_count" integer NOT NULL DEFAULT 0,
   "comment_count" integer NOT NULL DEFAULT 0,

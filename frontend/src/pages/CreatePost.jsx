@@ -6,6 +6,7 @@ export default function CreatePost() {
   const [title, setTitle] = useState('')
   const [summary, setSummary] = useState('')
   const [content, setContent] = useState('')
+  const [format, setFormat] = useState('markdown')
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
@@ -13,7 +14,7 @@ export default function CreatePost() {
     e.preventDefault()
     setError('')
     try {
-      const data = await createPost(title, summary, content)
+      const data = await createPost(title, summary, content, format)
       navigate(`/post/${data.id}`)
     } catch (err) {
       setError(err.message)
@@ -53,12 +54,37 @@ export default function CreatePost() {
           />
         </div>
         <div className="form-group">
-          <label>正文（支持 Markdown）</label>
+          <label>正文格式</label>
+          <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
+            <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input
+                type="radio"
+                name="format"
+                value="markdown"
+                checked={format === 'markdown'}
+                onChange={() => setFormat('markdown')}
+              />
+              📝 Markdown
+            </label>
+            <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input
+                type="radio"
+                name="format"
+                value="plain"
+                checked={format === 'plain'}
+                onChange={() => setFormat('plain')}
+              />
+              📄 纯文本
+            </label>
+          </div>
+        </div>
+        <div className="form-group">
+          <label>正文</label>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
-            placeholder="开始写作..."
+            placeholder={format === 'markdown' ? '支持 Markdown 语法...' : '请输入纯文本内容...'}
           />
         </div>
         <button className="btn btn-primary" type="submit">发布文章</button>

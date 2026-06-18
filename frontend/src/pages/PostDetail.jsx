@@ -99,8 +99,12 @@ export default function PostDetail() {
             >删除文章</button>
           </div>
         )}
-        <div className="content markdown-body">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+        <div className={post.format === 'markdown' ? 'content markdown-body' : 'content plain-text'}>
+          {post.format === 'markdown' ? (
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+          ) : (
+            <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0 }}>{post.content}</pre>
+          )}
         </div>
       </div>
 

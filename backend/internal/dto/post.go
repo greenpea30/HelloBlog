@@ -7,12 +7,14 @@ type CreatePostRequest struct {
 	Title   string `json:"title" binding:"required,min=1,max=200"`
 	Summary string `json:"summary" binding:"max=500"`
 	Content string `json:"content" binding:"required,min=1"`
+	Format  string `json:"format" binding:"omitempty,oneof=plain markdown"`
 }
 
 type UpdatePostRequest struct {
 	Title   string `json:"title" binding:"required,min=1,max=200"`
 	Summary string `json:"summary" binding:"max=500"`
 	Content string `json:"content" binding:"required,min=1"`
+	Format  string `json:"format" binding:"omitempty,oneof=plain markdown"`
 }
 
 type PostListRequest struct {
@@ -29,6 +31,7 @@ type PostResponse struct {
 	Title        string       `json:"title"`
 	Summary      string       `json:"summary"`
 	Content      string       `json:"content,omitempty"`
+	Format       string       `json:"format"`
 	User         UserResponse `json:"user,omitempty"`
 	LikeCount    int          `json:"like_count"`
 	CommentCount int          `json:"comment_count"`

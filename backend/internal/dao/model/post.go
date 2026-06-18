@@ -8,6 +8,7 @@ type Post struct {
 	Title        string    `gorm:"column:title;size:200;not null"`
 	Summary      string    `gorm:"column:summary"`
 	Content      string    `gorm:"column:content;not null"`
+	Format       string    `gorm:"column:format;size:10;default:markdown"`
 	SearchVector string    `gorm:"column:search_vector;->"`
 	LikeCount    int       `gorm:"column:like_count;default:0"`
 	CommentCount int       `gorm:"column:comment_count;default:0"`

@@ -57,6 +57,9 @@ jobs:
                 created_at timestamp NOT NULL DEFAULT (now())
               );
             "
+            docker exec helloblog-postgres psql -U helloblog -d helloblog -c "
+              ALTER TABLE posts ADD COLUMN IF NOT EXISTS format varchar(10) NOT NULL DEFAULT 'markdown';
+            "
             echo "  迁移完成"
 
             echo "🔍 4/5 检查 Docker..."
